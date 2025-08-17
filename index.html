@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mahmoud "نعناع" — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06060f;
+  --panel: rgba(255,255,255,0.03);
+  --glass: rgba(255,255,255,0.02);
+  --accent:#1e90ff;      /* neon blue */
+  --accent-2:#7c3aed;    /* purple */
+  --muted:rgba(255,255,255,0.65);
+  --text:#f0f6ff;
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* reset */
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg),#020316);color:var(--text);font-family:'Cairo',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+/* loader */
+#loader{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#0008,#0008);z-index:9999;
+  backdrop-filter: blur(2px);
+}
+.loader-inner{width:120px;height:120px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+.loader-ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 40px var(--accent);animation:spin 1.8s linear infinite; filter:blur(6px)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* layout */
+.container{max-width:1100px;margin:40px auto;padding:18px;display:grid;grid-template-columns:320px 1fr;gap:20px}
+.panel{background:var(--panel);border-radius:14px;padding:18px;box-shadow:var(--shadow);overflow:hidden}
+.sidebar .avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.avatar{
+  width:180px;height:180px;border-radius:18px;overflow:hidden;border:6px solid rgba(255,255,255,0.03);
+  box-shadow: 0 8px 40px rgba(28,120,255,0.12), inset 0 0 30px rgba(124,58,237,0.06);
+  transform: translateY(0); transition: transform .6s cubic-bezier(.2,.9,.3,1);
+}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block;filter: contrast(0.95) saturate(1.05)}
+
+/* glow halo */
+.avatar::after{
+  content:"";position:absolute;pointer-events:none;width:260px;height:260px;border-radius:50%;
+  margin-top:-40px;margin-right:-40px;filter:blur(28px);opacity:.9;
+  background: radial-gradient(circle at 30% 30%, rgba(30,144,255,0.18), transparent 30%),
+              radial-gradient(circle at 70% 70%, rgba(124,58,237,0.12), transparent 20%);
+}
+
+/* header name */
+.name-block{text-align:center;margin-top:6px}
+.h1{font-size:26px;font-weight:800;letter-spacing:0.6px}
+.sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+/* about */
+.about{margin-top:10px;line-height:1.6;color:var(--muted);font-size:14px}
+.about strong{color:var(--text);font-weight:700}
+
+/* languages list */
+.langs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center}
+.lang{background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:8px 10px;border-radius:10px;font-weight:700;font-size:13px;color:var(--muted);box-shadow:0 6px 18px rgba(4,6,20,0.5)}
+
+/* main right column */
+.header-main{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hero-title{font-size:20px;font-weight:800}
+.actions{display:flex;gap:10px;align-items:center}
+.btn{background:linear-gradient(90deg,var(--accent-2),var(--accent));padding:10px 14px;border-radius:10px;color:#041018;font-weight:800;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(124,58,237,0.12);transition:transform .18s}
+.btn:hover{transform:translateY(-4px)}
+
+/* sections */
+.section{margin-top:16px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00))}
+.section h3{margin:0 0 10px 0;font-size:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* contact icons */
+.contact{display:flex;gap:12px;justify-content:center;margin-top:12px}
+.contact a{width:44px;height:44px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);transition:transform .18s, box-shadow .18s}
+.contact a:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(30,144,255,0.12)}
+
+/* small badges */
+.badge{display:inline-block;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);font-weight:700;color:var(--muted);font-size:13px}
+
+/* language toggle */
+.lang-switch{display:flex;gap:6px;align-items:center}
+.toggle{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);cursor:pointer}
+.toggle.active{box-shadow:0 8px 30px rgba(28,120,255,0.06);background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#041018}
+
+/* small footer */
+.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+/* animations */
+.fade-up{opacity:0;transform:translateY(18px);transition:all .7s cubic-bezier(.15,.9,.3,1)}
+.fade-up.show{opacity:1;transform:none}
+@media (max-width:900px){
+  .container{grid-template-columns:1fr; padding:12px 14px}
+  .avatar{width:140px;height:140px}
+  .name-block .h1{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-ring" style="box-shadow:0 0 40px var(--accent);opacity:0.9;border-radius:50%"></div>
+    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" style="position:relative">
+      <path d="M12 2v6" stroke="#bfe4ff" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M12 16v6" stroke="#cfa7ff" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<div class="container" id="page" style="visibility:hidden;opacity:0">
+
+  <!-- left sidebar -->
+  <aside class="panel sidebar fade-up" id="leftPanel">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatarEl" style="position:relative">
+        <!-- put profile.jpg (user provided) in same folder -->
+        <img src="images/profile.jpg" alt="My Photo" class="profile-pic">
+      </div>
+
+      <div class="name-block">
+        <div class="h1">Mahmoud <span style="color:var(--accent)">Mostafa</span> 
+        <div class="sub">اللقب: <strong>نعناع / GOLD</strong></div>
+      </div>
+
+      <div class="about" id="aboutAr">
+        <p><strong>عمري 18 .</strong> مبرمج، إديتور، ومصمم مواقع. بحول الأفكار لـواجهات و مواقع ؛ و بحب الدقّة والتفاصيل. عندي رؤيه مستقبلية لكل الأفكار و عندي مهارات تقنية تخليك متميّز.</p>
+        <p style="margin-top:8px"><em>“.JUST THE N3NA3”</em></p>
+      </div>
+
+      <div class="about" id="aboutEn" style="display:none">
+        <p><strong>Age 18.</strong> Programmer, editor and web-designer. I turn ideas into polished interfaces and crisp code — detail-oriented and creative. A young talent with a big future.</p>
+        <p style="margin-top:8px"><em>"A rising dev with a crafted eye — follow along for impressive stuff."</em></p>
+      </div>
+
+      <div class="section">
+        <div style="display:flex;justify-content:center;gap:8px;align-items:center">
+          <div class="badge">المنصورة، الدقهلية</div>
+          <div class="badge">3 ثانوي</div>
+        </div>
+
+        <div class="section" style="margin-top:12px">
+          <h3>لغات البرمجة / Programming</h3>
+          <div class="langs" id="langsList">
+            <!-- inserted by JS -->
+          </div>
+        </div>
+
+        <div class="section" style="margin-top:12px;text-align:center">
+          <h3>تواصل</h3>
+          <div class="contact">
+            <a title="Facebook" href="https://www.facebook.com/GOLDVB" target="_blank" rel="noopener noreferrer">
+              <!-- FB SVG -->
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07C2 17.11 5.66 21.23 10.44 22v-6.99H7.9v-2.94h2.54V9.41c0-2.5 1.49-3.87 3.77-3.87 1.09 0 2.23.2 2.23.2v2.45h-1.25c-1.23 0-1.61.77-1.61 1.56v1.87h2.74l-.44 2.94h-2.3V22C18.34 21.23 22 17.11 22 12.07z" fill="#fff" opacity="0.95"/></svg>
+            </a>
+            <a title="Instagram" href="https://www.instagram.com/mahmoud_mostafa_1_1?igsh=OW1oM2x4cnluYnI5" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 6.1a4.9 4.9 0 100 9.8 4.9 4.9 0 000-9.8zM18.5 6.2a1.1 1.1 0 11-2.2 0 1.1 1.1 0 012.2 0z" fill="#fff" opacity="0.95"/></svg>
+            </a>
+            <a title="WhatsApp" href="https://wa.me/201558354791" target="_blank" rel="noopener noreferrer">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M20.52 3.48A11.9 11.9 0 0012 .1C5.5.1.6 5 .6 11.7c0 2 0.5 3.8 1.5 5.4L.1 23.9 7.9 21.9a11.5 11.5 0 005.9 1.5c6.5 0 11.8-5 11.8-11.6 0-3.1-1.2-5.8-3.8-7.7zM12 20.2a8.1 8.1 0 01-4.2-1.2l-.3-.2-4.7 1.3 1.3-4.6-.2-.3A8.1 8.1 0 013.8 11.7 8.2 8.2 0 1112 20.2z" fill="#fff" opacity="0.95"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- right / main -->
+  <main class="panel fade-up" id="mainPanel" style="padding:20px">
+    <div class="header-main">
+      <div>
+        <div class="hero-title">Mahmoud — Portfolio</div>
+        <div class="sub">مبرمج • إديتور • مصمم مواقع</div>
+      </div>
+
+      <div class="actions">
+        <div class="lang-switch" role="tablist" aria-label="language switch">
+          <div id="btnAr" class="toggle active" onclick="switchLang('ar')">عربي</div>
+          <div id="btnEn" class="toggle" onclick="switchLang('en')">EN</div>
+        </div>
+        <button class="btn" onclick="downloadCV()">تحميل السيرة</button>
+      </div>
+    </div>
+
+      <div style="flex:1" class="section">
+        <h3>المشاريع</h3>
+        <p class="muted">لا توجد مشاريع حالياً — المشاريع هتتضاف قريباً. تقدر تتواصل لو حابب تشارك أو تشتغل معايا.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>المهارات التقنية • Tech Skills</h3>
+      <div class="row" id="skillsWrap" style="margin-top:8px">
+        <!-- badges inserted by JS -->
+      </div>
+    </div>
+
+    <div class="section" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <div>
+        <div style="font-weight:800">رابط لـنـسخ</div>
+        <div class="muted">الموقع</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn small" onclick="copyLink()">انـــســـخــنــي</button>
+      </div>
+    </div>
+
+    <div class="footer muted">Design & Code By — MAHMOUD</div>
+  </main>
+
+</div>
+
+<script>
+/* ---------- Data (from you) ---------- */
+const PROFILE = {
+  fullName: "Mahmoud Mostafa",
+  display: "نعناع / GOLD",
+  location: "المنصورة، الدقهلية",
+  education: "ثالثة ثانوي",
+  age: 18,
+  bioAr: `أنا <strong>Mahmoud (نعناع)</strong> عندي 18 سنة. مبرمج، إديتور، ومصمم مواقع. أشتغل بدقّة وأسلوب فني، وأحوّل الأفكار لواجهات وأكواد نظيفة. مستعد أتعلم وأطوّر مشاريع مستقبلية مبهرة.`,
+  bioEn: `I’m <strong>Mahmoud (Nana')</strong>, 18 years old. Programmer, editor and web-designer. I craft clean code and elegant interfaces — driven by detail and creativity. Projects coming soon.`,
+  socials: {
+    fb: "https://www.facebook.com/GOLDVB",
+    ig: "https://www.instagram.com/mahmoud_mostafa_1_1?igsh=OW1oM2x4cnluYnI5",
+    wa: "https://wa.me/201558354791"
+  },
+  languages: [
+    "Python","Ruby","JavaScript","TypeScript","Java","#C","++C",
+    "PHP","Swift","Kotlin","Go","Rust","SQL","HTML5","CSS3","Dart","Bash","وغـــيــرهــم"
+  ]
+};
+
+/* ---------- helpers & UI setup ---------- */
+function $(s){return document.querySelector(s)}
+function $all(s){return Array.from(document.querySelectorAll(s))}
+
+/* populate languages and skills */
+const langsEl = document.getElementById('langsList');
+PROFILE.languages.forEach(l=>{
+  const d = document.createElement('div'); d.className='lang'; d.textContent = l; langsEl.appendChild(d);
+});
+
+const skillsWrap = document.getElementById('skillsWrap');
+PROFILE.languages.forEach(l=>{
+  const b = document.createElement('div'); b.className='badge'; b.textContent = l;
+  skillsWrap.appendChild(b);
+});
+
+/* about text done already */
+
+/* language toggle */
+function switchLang(code){
+  const btnAr = document.getElementById('btnAr'), btnEn = document.getElementById('btnEn');
+  if(code === 'ar'){
+    btnAr.classList.add('active'); btnEn.classList.remove('active');
+    document.getElementById('aboutAr').style.display = 'block';
+    document.getElementById('aboutEn').style.display = 'none';
+    document.getElementById('aboutTextAr').style.display = 'block';
+    document.getElementById('aboutTextEn').style.display = 'none';
+    // update direction
+    document.documentElement.lang = 'ar'; document.documentElement.dir = 'rtl';
+  } else {
+    btnAr.classList.remove('active'); btnEn.classList.add('active');
+    document.getElementById('aboutAr').style.display = 'none';
+    document.getElementById('aboutEn').style.display = 'block';
+    document.getElementById('aboutTextAr').style.display = 'none';
+    document.getElementById('aboutTextEn').style.display = 'block';
+    document.documentElement.lang = 'en'; document.documentElement.dir = 'ltr';
+  }
+}
+
+/* copy link */
+function copyLink(){
+  const url = location.href;
+  navigator.clipboard.writeText(url).then(()=> alert('تم نسخ رابط الموقع'));
+}
+
+/* download CV (basic generated) */
+function downloadCV(){
+  const lines = [
+    `Name: ${PROFILE.fullName}`,
+    `Nickname: ${PROFILE.display}`,
+    `Location: ${PROFILE.location}`,
+    `Age: ${PROFILE.age}`,
+    '',
+    'About:',
+    PROFILE.bioEn.replace(/<[^>]+>/g,''),
+    '',
+    'Skills: ' + PROFILE.languages.join(', '),
+    '',
+    'Education: ' + PROFILE.education,
+    '',
+    'Contacts:',
+    `Facebook: ${PROFILE.socials.fb}`,
+    `Instagram: ${PROFILE.socials.ig}`,
+    `WhatsApp: ${PROFILE.socials.wa}`
+  ];
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Mahmoud_CV.txt'; a.click();
+}
+
+/* fade-in reveal */
+function reveal(){
+  document.querySelectorAll('.fade-up').forEach((el,i)=>{
+    setTimeout(()=> el.classList.add('show'), 180 + i*120);
+  });
+}
+
+/* loader hide and show page */
+window.addEventListener('load', ()=> {
+  setTimeout(()=>{ // fake loading for effect
+    document.getElementById('loader').style.opacity = 0;
+    document.getElementById('loader').style.transition = 'opacity .6s';
+    setTimeout(()=> document.getElementById('loader').style.display='none', 700);
+    // show page
+    const p = document.getElementById('page'); p.style.visibility='visible'; p.style.opacity=1; p.style.transition='opacity .6s';
+    reveal();
+  }, 900);
+});
+
+/* small interactive avatar hover effect */
+const avatarEl = document.querySelector('.avatar');
+avatarEl.addEventListener('mouseenter', ()=> avatarEl.style.transform = 'translateY(-6px) scale(1.02)');
+avatarEl.addEventListener('mouseleave', ()=> avatarEl.style.transform = 'translateY(0)');
+
+/* fill some dynamic places on load */
+document.addEventListener('DOMContentLoaded', ()=>{
+  // in-case you want dynamic content later
+  $('#uiName') && ($('#uiName').textContent = PROFILE.fullName);
+  $('#uiServer') && ($('#uiServer').textContent = PROFILE.location);
+});
+
+/* accessibility: allow keyboard toggle */
+document.addEventListener('keydown', (e)=> {
+  if(e.key === 'l') switchLang(document.documentElement.lang === 'ar' ? 'en' : 'ar');
+});
+</script>
+</body>
+</html>
